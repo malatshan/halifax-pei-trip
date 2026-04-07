@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Nova Scotia & PEI Family Trip — Jun 25–30</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ocean:#1a4b6e;--sand:#f5f0e8;--coral:#e06d4f;--kelp:#3a7d5c;
+  --fog:#c9d6df;--ink:#1c1c1c;--drift:#d4a96a;--plum:#6b4c9a;
+  --amber:#c4883a;--pei:#c0392b;--white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--sand);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.serif{font-family:'DM Serif Display',serif}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--coral)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d2b40,#1a4b6e 55%,#2a6d9e);color:#fff;padding:48px 20px 34px;text-align:center}
+.hero h1{font-size:clamp(1.5rem,5vw,2.4rem);letter-spacing:-.02em}
+.hero .sub{opacity:.7;font-size:.88rem;margin-top:4px;font-weight:300}
+.hero .badge{display:inline-block;margin-top:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:5px 18px;font-size:.75rem;font-weight:500}
+.progress-wrap{max-width:260px;margin:14px auto 0}
+.progress-label{display:flex;justify-content:space-between;font-size:.63rem;opacity:.55;margin-bottom:3px}
+.progress-bar{background:rgba(255,255,255,.15);border-radius:100px;height:5px;overflow:hidden}
+.progress-fill{height:100%;background:var(--coral);border-radius:100px;transition:width .4s}
+
+/* TABS */
+.tabs{display:flex;justify-content:center;gap:3px;padding:9px 8px;background:#fff;border-bottom:1px solid #e8e2d8;position:sticky;top:0;z-index:20}
+.tab-btn{padding:7px 13px;border-radius:100px;border:none;font-size:.74rem;font-weight:400;background:transparent;color:#888;transition:all .2s;white-space:nowrap}
+.tab-btn.active{background:var(--ocean);color:#fff;font-weight:600}
+
+.container{max-width:660px;margin:0 auto;padding:16px 12px 80px}
+
+/* DAY NAV */
+.day-nav{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.day-nav::-webkit-scrollbar{display:none}
+.day-chip{flex:0 0 auto;padding:5px 12px;border-radius:100px;border:2px solid #ddd;font-size:.72rem;font-weight:600;background:#fff;color:#888;transition:all .2s;white-space:nowrap}
+.day-chip.active{color:#fff}
+
+/* DAY CARD */
+.day-card{background:#fff;border-radius:12px;margin-bottom:10px;overflow:hidden;transition:box-shadow .3s;border-left:4px solid var(--ocean)}
+.day-card.open{box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.day-head{width:100%;padding:13px 14px;display:flex;align-items:center;gap:9px;border:none;background:transparent;text-align:left}
+.day-badge{color:#fff;font-size:.78rem;padding:2px 10px;border-radius:100px;white-space:nowrap}
+.day-meta{flex:1;min-width:0}
+.day-title{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-date{font-size:.68rem;color:#999;margin-top:1px}
+.day-stops{font-size:.63rem;color:#aaa;background:var(--sand);padding:2px 8px;border-radius:100px;white-space:nowrap}
+.day-arrow{font-size:1rem;color:#ccc;transition:transform .3s}
+.day-body{padding:0 14px 14px;animation:fadeIn .25s ease}
+
+/* TIMELINE */
+.tl-row{display:flex;gap:9px;margin-bottom:11px;transition:opacity .3s}
+.tl-row.done{opacity:.4}
+.tl-check-col{display:flex;flex-direction:column;align-items:center;min-width:22px}
+.tl-check{width:19px;height:19px;border-radius:5px;border:2px solid #ddd;background:transparent;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#fff;transition:all .2s;flex-shrink:0}
+.tl-check.checked{color:#fff}
+.tl-line{width:2px;flex:1;background:#eee;margin-top:3px}
+.tl-time{font-size:.63rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.tl-title{font-weight:600;font-size:.86rem}
+.tl-desc{font-size:.8rem;color:#666;margin-top:2px;line-height:1.4}
+
+/* INFO CARDS */
+.info-card{border-radius:8px;padding:11px 13px;margin-top:6px}
+.info-card.hotel{background:linear-gradient(135deg,#f0f6f3,#e8f0ec)}
+.info-card.dining{background:linear-gradient(135deg,#fdf5ee,#faeee0)}
+.info-tag{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:3px}
+.info-card.hotel .info-tag{color:var(--kelp)}
+.info-card.dining .info-tag{color:var(--drift)}
+.tip-box{background:#fff9ec;border-left:3px solid var(--drift);padding:8px 11px;border-radius:0 6px 6px 0;margin-top:8px;font-size:.76rem;color:#6b5a3e}
+
+/* MAP */
+.map-wrap{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:16px}
+.map-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.map-filters{display:flex;gap:3px}
+.map-filter{padding:3px 9px;border-radius:100px;border:1px solid #ddd;font-size:.66rem;font-weight:600;background:#fff;color:#888;transition:all .15s}
+.map-filter.active{color:#fff}
+.route-card{width:100%;background:#fff;border-radius:8px;padding:12px 14px;margin-bottom:7px;border:none;text-align:left;transition:all .15s;cursor:pointer}
+.crossing-card{background:#fff;border-radius:8px;padding:12px 14px;margin-top:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+
+/* WEATHER */
+.wx-day{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.wx-row{display:flex;align-items:center;gap:12px}
+.wx-icon{font-size:1.8rem;flex-shrink:0}
+.wx-temps{display:flex;gap:6px;font-size:.82rem;margin-top:4px}
+.wx-hi{font-weight:600;color:var(--coral)}
+.wx-lo{color:#999}
+.wx-detail{font-size:.78rem;color:#666;margin-top:4px;line-height:1.4}
+.wx-pack{background:linear-gradient(135deg,#e8f0f6,#dce8f0);border-radius:10px;padding:14px 16px;margin-top:6px}
+
+/* BUDGET */
+.budget-row{margin-bottom:11px}
+.budget-head{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px}
+.budget-bar-bg{background:#f0ece4;border-radius:100px;height:6px;overflow:hidden}
+.budget-bar{height:100%;border-radius:100px}
+.budget-detail{font-size:.66rem;color:#aaa;margin-top:1px}
+.budget-total{background:linear-gradient(135deg,var(--ocean),#0d2b40);color:#fff;border-radius:12px;padding:20px;text-align:center}
+
+/* LOGISTICS CARD */
+.log-card{background:#fff;border-radius:9px;padding:12px 14px;margin-bottom:7px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.log-icon{font-size:1.15rem}
+.log-title{font-weight:600;font-size:.88rem}
+.log-text{font-size:.82rem;color:#555;line-height:1.4;margin-top:3px}
+.region-card{background:#fff;border-radius:8px;padding:11px 13px;margin-bottom:5px}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px 16px;font-size:.7rem;color:#bbb}
+.share-hint{background:#fff;border-radius:10px;padding:12px 16px;margin:20px 0 0;text-align:center;font-size:.8rem;color:#888;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+
+/* Hide scrollbar on nav */
+.day-nav{scrollbar-width:none}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1 class="serif">Nova Scotia & PEI Adventure</h1>
+  <div class="sub">Halifax · South Shore · Prince Edward Island</div>
+  <div class="badge">Jun 25–30, 2026 · 5 Nights · Family of 4</div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Trip Checklist</span><span id="progressText">0/27</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="itinerary">📅 Itinerary</button>
+  <button class="tab-btn" data-tab="map">🗺️ Map</button>
+  <button class="tab-btn" data-tab="weather">🌤️ Weather</button>
+  <button class="tab-btn" data-tab="budget">💰 Budget</button>
+  <button class="tab-btn" data-tab="info">🧭 Info</button>
+</div>
+
+<div class="container">
+
+<!-- ============ ITINERARY TAB ============ -->
+<div id="tab-itinerary" class="tab-content"></div>
+
+<!-- ============ MAP TAB ============ -->
+<div id="tab-map" class="tab-content" style="display:none">
+  <div class="map-wrap">
+    <div class="map-header">
+      <div class="serif" style="font-size:1.1rem;color:var(--ocean)">Route Map</div>
+      <div class="map-filters" id="mapFilters">
+        <button class="map-filter active" data-mapday="all" style="background:var(--ocean);color:#fff">All</button>
+        <button class="map-filter" data-mapday="3">Day 3</button>
+        <button class="map-filter" data-mapday="4">Day 4</button>
+        <button class="map-filter" data-mapday="5">Day 5</button>
+      </div>
+    </div>
+    <svg id="routeMap" viewBox="0 0 520 400" style="width:100%;height:auto;border-radius:8px;overflow:hidden"></svg>
+  </div>
+
+  <div class="serif" style="font-size:1.05rem;color:var(--ocean);margin-bottom:8px">Route Summary</div>
+  <div id="routeCards"></div>
+
+  <div class="crossing-card">
+    <div style="font-size:.73rem;font-weight:600;color:var(--ocean);margin-bottom:6px">Key Crossings</div>
+    <div style="font-size:.8rem;color:#555;margin-bottom:6px">🌉 <strong>Confederation Bridge</strong> — 12.9 km, ~10 min. Free to enter PEI; ~$50 toll on exit. Cards accepted.</div>
+    <div style="font-size:.8rem;color:#555">⛴ <strong>Northumberland Ferry</strong> — Wood Islands → Caribou, NS. 75 min. Book at ferries.ca. ~$80/car on departure.</div>
+  </div>
+</div>
+
+<!-- ============ WEATHER TAB ============ -->
+<div id="tab-weather" class="tab-content" style="display:none"></div>
+
+<!-- ============ BUDGET TAB ============ -->
+<div id="tab-budget" class="tab-content" style="display:none"></div>
+
+<!-- ============ INFO TAB ============ -->
+<div id="tab-info" class="tab-content" style="display:none"></div>
+
+<div class="share-hint">📱 <strong>To save on your phone:</strong> tap Share → Add to Home Screen</div>
+<div class="footer">Halifax & PEI Family Trip · Jun 25–30, 2026 · Prices in CAD, estimates only</div>
+
+</div>
+
+<script>
+// ===== DATA =====
+const DAYS=[
+{num:1,title:"Arrival in Halifax",date:"Thu, Jun 25",tag:"Halifax",color:"#1a4b6e",emoji:"✈️",
+hotel:{name:"Homewood Suites by Hilton Halifax Downtown",detail:"Kitchenette suites, free breakfast, indoor pool. ~CAD $190–240/night",alt:"Hampton Inn Downtown (~$180) · Residence Inn by Marriott (~$200)"},
+dining:[{n:"Waterfront boardwalk vendors",d:"Lobster rolls, fish & chips"},{n:"Freeman's Little New York",d:"Pizza & burgers, late-night friendly"}],
+blocks:[
+{t:"9:17 PM",h:"Land at Halifax Stanfield (YHZ)",d:"Clear customs, collect bags, pick up rental car. 35-min drive downtown via Hwy 102."},
+{t:"10:00 PM",h:"Check In & Quick Bite",d:"Late arrival — drop bags, stretch out. Grab a Halifax donair or boardwalk snack, or stock the kitchenette from Atlantic Superstore."},
+{t:"10:30 PM",h:"Settle In",d:"Rest up for tomorrow. Unpack, let the kids wind down."}],
+tip:"Pre-book your rental car for 9:30 PM pickup. Enterprise and National have airport counters open late."},
+
+{num:2,title:"Halifax City Day",date:"Fri, Jun 26",tag:"Halifax",color:"#3a7d5c",emoji:"🏰",
+hotel:{name:"Homewood Suites (Night 2)",detail:"Same hotel — no repacking.",alt:""},
+dining:[{n:"Seaport Farmers' Market",d:"Lunch — chowder, baked goods"},{n:"Ristorante a Mano",d:"Elegant Italian, kids love the pasta"},{n:"Vandal Doughnuts",d:"Waterfront dessert"}],
+blocks:[
+{t:"9:00 AM",h:"Halifax Citadel National Historic Site",d:"Star-shaped hilltop fort. Kids dress as soldiers, noon cannon firing, comic-book mystery guide. 1.5–2 hrs."},
+{t:"11:30",h:"Discovery Centre",d:"Waterfront science museum. Hurricane simulator, giant bubble maker, digital planetarium. 1.5 hrs."},
+{t:"12:30",h:"Seaport Farmers' Market Lunch",d:"North America's oldest market (est. 1750). Affordable chowder, baked goods, local treats."},
+{t:"2:00 PM",h:"Maritime Museum + Pier 21",d:"Titanic connection & Halifax Explosion — gripping for teens. Pier 21 immigration stories."},
+{t:"4:00 PM",h:"Public Gardens & Central Library",d:"Free Victorian gardens. Library shaped like stacked books — 5th-floor panoramic views."},
+{t:"5:30 PM",h:"Alderney Ferry Ride",d:"$2.75 harbour cruise to Dartmouth and back. 12 min each way."}],
+tip:"Royal NS International Tattoo runs Jun 27–Jul 1. Kids 18 & under FREE with adult ticket. Grab Saturday night tickets!"},
+
+{num:3,title:"Peggy's Cove & Lunenburg",date:"Sat, Jun 27",tag:"South Shore",color:"#e06d4f",emoji:"🏠",
+hotel:{name:"Cambridge Suites Halifax",detail:"Harbour-view family suites, continental breakfast. ~CAD $195–250/night",alt:"Four Points by Sheraton Halifax (~$170, pool)"},
+dining:[{n:"Sou'Wester (Peggy's Cove)",d:"Only restaurant in the village — lobster!"},{n:"Salt Shaker Deli (Lunenburg)",d:"Great chowder"},{n:"King of Donair (Halifax)",d:"Quick pre-Tattoo dinner"}],
+blocks:[
+{t:"7:30 AM",h:"Early Start → Peggy's Cove",d:"Beat crowds arriving ~8:15 AM (45 min). Canada's most photographed lighthouse on granite boulders. Stay off dark wet rocks! 1–1.5 hrs."},
+{t:"10:00",h:"Mahone Bay",d:"Three-churches waterfront. Photo stop, galleries, ice cream. 30 min."},
+{t:"11:30",h:"Lunenburg — UNESCO World Heritage",d:"Colourful 1753 fishing town. Fisheries Museum touch tanks, Bluenose II schooner (the ship on your dime!). 2.5 hrs + lunch."},
+{t:"3:00 PM",h:"Ovens Sea Caves or Blue Rocks",d:"Optional: Ovens (20 min south) — cliff walks + gold panning. Or quiet Blue Rocks village. Return via Hwy 103 (~1 hr)."},
+{t:"8:00 PM",h:"Royal NS International Tattoo 🎪",d:"Opening night! Pipe bands, military displays, gymnastics, comedy. Kids free w/ adult ticket."}],
+tip:"Pack a cooler with snacks & water. Gas is sparse on the Lighthouse Route — fill up before leaving."},
+
+{num:4,title:"Road Trip to PEI",date:"Sun, Jun 28",tag:"PEI",color:"#c0392b",emoji:"🌉",
+hotel:{name:"Rodd Charlottetown Hotel",detail:"Pool, central, family rooms. ~CAD $180–230/night",alt:"Holiday Inn Express Charlottetown (~$160) · Best Western (~$150)"},
+dining:[{n:"Sugar Moon Farm (en route)",d:"Brunch — maple pancakes, local sausage"},{n:"Peake's Quay (Charlottetown)",d:"Waterfront patio, seafood, live music"},{n:"COWS Ice Cream",d:"PEI institution — kids will beg for seconds"}],
+blocks:[
+{t:"8:00 AM",h:"Depart Halifax → Sugar Moon Farm",d:"1.5 hr drive to this beloved sugar shack near Truro. Maple pancakes & local sausage brunch in the woods."},
+{t:"10:30",h:"Confederation Bridge",d:"1.5 hrs from Sugar Moon. 12.9 km bridge takes ~10 min — an experience itself! Free to enter PEI (toll only on exit ~$50)."},
+{t:"12:30",h:"Gateway Village & COWS Creamery",d:"First stop on PEI at bridge landing. COWS for ice cream + whimsical t-shirts."},
+{t:"1:30 PM",h:"Green Gables Heritage Place",d:"45 min north. Farmhouse that inspired Anne of Green Gables. Haunted Woods trail, Lake of Shining Waters. The 13-year-old girls especially will love it."},
+{t:"3:30 PM",h:"Cavendish Beach (PEI National Park)",d:"Stunning red sand beach! Warmer than Halifax side. Swim, sandcastles, dune walks. Supervised in summer. 1.5 hrs."},
+{t:"5:30 PM",h:"Drive to Charlottetown",d:"40 min to PEI's capital. Check in, freshen up."},
+{t:"7:00 PM",h:"Charlottetown Waterfront Dinner",d:"Peake's Quay — live music, floating patios, food trucks. PEI lobster suppers are legendary!"}],
+tip:"Confederation Bridge toll is only on EXIT (~$50/car). Entering PEI is free! Cards accepted."},
+
+{num:5,title:"PEI Morning → Ferry Home",date:"Mon, Jun 29",tag:"PEI → Halifax",color:"#6b4c9a",emoji:"⛴️",
+hotel:{name:"Hampton Inn Halifax Downtown",detail:"Free buffet breakfast, indoor pool. ~CAD $175–220/night",alt:"Atlantica Hotel Halifax (~$170, pool, restaurant)"},
+dining:[{n:"Receiver Coffee (Charlottetown)",d:"Best coffee on PEI"},{n:"Lobster on the Wharf",d:"Casual waterfront seafood"},{n:"Salty's (Halifax)",d:"Farewell dinner, harbour views"}],
+blocks:[
+{t:"8:30 AM",h:"Charlottetown Morning Walk",d:"Eckhart in the City scavenger hunt — find 9 bronze mouse statues! Province House (birthplace of Canada). Victoria Park splash pad."},
+{t:"11:00",h:"Lobster Boat Tour",d:"Peakes Wharf — 1-hr lobster fishing experience. Kids hold lobsters, spot seals, sit in the captain's chair. Book ahead!"},
+{t:"12:30",h:"Lunch & Depart",d:"Quick lunch at Lobster on the Wharf. Then drive east to Wood Islands ferry (~1 hr)."},
+{t:"2:30 PM",h:"Northumberland Ferry → Nova Scotia",d:"75-min scenic crossing to Caribou, NS. Lounge on deck, watch for dolphins. Book at ferries.ca!"},
+{t:"5:00 PM",h:"Drive to Halifax",d:"~2.5 hrs from Caribou via Hwy 104/102. Arrive ~7:30 PM."},
+{t:"7:30 PM",h:"Farewell Group Dinner 🥂",d:"Last evening with all 3 families. Harbourfront at sunset. Book for 12."}],
+tip:"Book the Wood Islands ferry at ferries.ca well in advance. Peak season fills fast!"},
+
+{num:6,title:"Last Morning & Departure",date:"Tue, Jun 30",tag:"Halifax",color:"#1a4b6e",emoji:"🛫",
+hotel:{name:"",detail:"",alt:""},
+dining:[{n:"One last lobster roll",d:"You'll miss it immediately"},{n:"Peace by Chocolate",d:"Souvenir bars at Queen's Marque"}],
+blocks:[
+{t:"9:00 AM",h:"Museum of Natural History",d:"Meet Gus, the 103-year-old gopher tortoise! Dinosaurs, whale skeletons. Ask for kids' scavenger hunt. 1.5 hrs."},
+{t:"11:00",h:"Point Pleasant Park",d:"75-hectare forested park at Halifax's tip. Military ruins, ocean views, Prince of Wales Tower."},
+{t:"12:30",h:"Final Lunch & Souvenirs",d:"Last chowder. Peace by Chocolate at Queen's Marque. Art Gallery of Nova Scotia if time allows."},
+{t:"2:00 PM",h:"Return Car & Airport",d:"35-min drive to YHZ. Small, efficient airport — 2 hrs before is plenty."},
+{t:"4:35 PM",h:"Departure ✈️",d:"Home with memories of lighthouses, lobster, red sand, and the Confederation Bridge."}],
+tip:"If flying to the US, you clear customs in Halifax — allow extra time."}
+];
+
+const BUDGET=[
+{cat:"Hotels",detail:"5 nights × ~$200 avg",amt:1000},
+{cat:"Dining",detail:"Restaurants + groceries, 5 days",amt:750},
+{cat:"Car Rental",detail:"Midsize SUV × 5 days",amt:500},
+{cat:"Attractions",detail:"Citadel, museums, Green Gables, boat tour",amt:250},
+{cat:"Misc",detail:"Souvenirs, parking, snacks",amt:150},
+{cat:"Tattoo Tickets",detail:"2 adults (kids free)",amt:120},
+{cat:"Gas",detail:"~800 km total incl. PEI",amt:110},
+{cat:"PEI Ferry",detail:"Return crossing",amt:80},
+{cat:"Conf. Bridge",detail:"Exit toll",amt:50}
+];
+
+const WEATHER=[
+{day:"Thu Jun 25",hi:19,lo:11,icon:"🌤️",cond:"Partly cloudy",rain:"20%",wind:"15 km/h SW",note:"Arriving late evening. Cool and pleasant for the drive downtown."},
+{day:"Fri Jun 26",hi:20,lo:12,icon:"☀️",cond:"Mostly sunny",rain:"10%",wind:"12 km/h W",note:"Perfect museum & walking weather. Light layers for the Citadel hilltop."},
+{day:"Sat Jun 27",hi:18,lo:11,icon:"⛅",cond:"Mix of sun & cloud",rain:"30%",wind:"18 km/h SW",note:"Coastal fog possible at Peggy's Cove early morning — often burns off by 10 AM. Bring a light rain jacket."},
+{day:"Sun Jun 28",hi:21,lo:13,icon:"☀️",cond:"Sunny & warm",rain:"15%",wind:"14 km/h S",note:"Great beach day on PEI! Red sand beaches are slightly warmer than Halifax side. Sunscreen essential."},
+{day:"Mon Jun 29",hi:20,lo:12,icon:"🌤️",cond:"Partly cloudy",rain:"25%",wind:"16 km/h W",note:"Comfortable for the ferry crossing. Bring a windbreaker for the open deck."},
+{day:"Tue Jun 30",hi:19,lo:11,icon:"⛅",cond:"Variable cloud",rain:"20%",wind:"13 km/h SW",note:"Mild morning for final exploring. Good travel weather for departure."}
+];
+
+const MAP_POINTS=[
+{id:"halifax",label:"Halifax",x:370,y:295,color:"#1a4b6e"},
+{id:"peggys",label:"Peggy's Cove",x:315,y:318,color:"#e06d4f"},
+{id:"mahone",label:"Mahone Bay",x:288,y:330,color:"#e06d4f"},
+{id:"lunenburg",label:"Lunenburg",x:268,y:345,color:"#e06d4f"},
+{id:"truro",label:"Truro",x:370,y:228,color:"#d4a96a"},
+{id:"confederation",label:"Conf. Bridge",x:290,y:138,color:"#c0392b"},
+{id:"cavendish",label:"Cavendish",x:350,y:78,color:"#c0392b"},
+{id:"charlottetown",label:"C'town",x:400,y:108,color:"#c0392b"},
+{id:"woodislands",label:"Wood Is.",x:415,y:145,color:"#6b4c9a"},
+{id:"caribou",label:"Caribou",x:355,y:188,color:"#6b4c9a"},
+];
+
+const MAP_ROUTES=[
+{from:"halifax",to:"peggys",day:3,color:"#e06d4f"},
+{from:"peggys",to:"mahone",day:3,color:"#e06d4f"},
+{from:"mahone",to:"lunenburg",day:3,color:"#e06d4f"},
+{from:"lunenburg",to:"halifax",day:3,color:"#e06d4f",dashed:true},
+{from:"halifax",to:"truro",day:4,color:"#c0392b"},
+{from:"truro",to:"confederation",day:4,color:"#c0392b"},
+{from:"confederation",to:"cavendish",day:4,color:"#c0392b"},
+{from:"cavendish",to:"charlottetown",day:4,color:"#c0392b"},
+{from:"charlottetown",to:"woodislands",day:5,color:"#6b4c9a"},
+{from:"woodislands",to:"caribou",day:5,color:"#6b4c9a",dashed:true},
+{from:"caribou",to:"truro",day:5,color:"#6b4c9a"},
+{from:"truro",to:"halifax",day:5,color:"#6b4c9a"},
+];
+
+const ROUTE_SUMMARY=[
+{day:3,label:"Day 3 — South Shore Loop",desc:"Halifax → Peggy's Cove → Mahone Bay → Lunenburg → Halifax",dist:"~200 km",color:"#e06d4f"},
+{day:4,label:"Day 4 — Halifax to PEI",desc:"Halifax → Sugar Moon → Conf. Bridge → Cavendish → Charlottetown",dist:"~380 km",color:"#c0392b"},
+{day:5,label:"Day 5 — PEI → Ferry → Halifax",desc:"Charlottetown → Wood Islands → Ferry → Caribou → Halifax",dist:"~320 km",color:"#6b4c9a"}
+];
+
+// ===== STATE =====
+let openDay=null, activeTab="itinerary", mapFilter="all";
+const checked={};
+const totalBlocks=DAYS.reduce((s,d)=>s+d.blocks.length,0);
+
+function getCheckedCount(){return Object.values(checked).filter(Boolean).length;}
+function updateProgress(){
+  const c=getCheckedCount();
+  document.getElementById("progressText").textContent=c+"/"+totalBlocks;
+  document.getElementById("progressFill").style.width=(totalBlocks?(c/totalBlocks)*100:0)+"%";
+}
+
+// ===== TABS =====
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    activeTab=btn.dataset.tab;
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(c=>c.style.display="none");
+    document.getElementById("tab-"+activeTab).style.display="block";
+  });
+});
+
+// ===== RENDER ITINERARY =====
+function renderItinerary(){
+  const el=document.getElementById("tab-itinerary");
+  let nav='<div class="day-nav">';
+  DAYS.forEach(d=>{
+    const act=openDay===d.num;
+    nav+=`<button class="day-chip ${act?"active":""}" data-day="${d.num}" style="${act?`background:${d.color};border-color:${d.color};color:#fff`:""}">${d.emoji} Day ${d.num}</button>`;
+  });
+  nav+='</div>';
+
+  let cards='';
+  DAYS.forEach(day=>{
+    const isOpen=openDay===day.num;
+    cards+=`<div class="day-card ${isOpen?"open":""}" style="border-left-color:${day.color}" id="daycard-${day.num}">`;
+    cards+=`<button class="day-head" data-toggle="${day.num}">`;
+    cards+=`<span class="day-badge serif" style="background:${day.color}">Day ${day.num}</span>`;
+    cards+=`<div class="day-meta"><div class="day-title">${day.title}</div><div class="day-date">${day.date} · ${day.tag}</div></div>`;
+    cards+=`<span class="day-stops">${day.blocks.length} stops</span>`;
+    cards+=`<span class="day-arrow" style="transform:rotate(${isOpen?180:0}deg)">▾</span>`;
+    cards+=`</button>`;
+
+    if(isOpen){
+      cards+=`<div class="day-body">`;
+      day.blocks.forEach((b,i)=>{
+        const k=day.num+"-"+i, done=checked[k];
+        cards+=`<div class="tl-row ${done?"done":""}">`;
+        cards+=`<div class="tl-check-col"><button class="tl-check ${done?"checked":""}" data-check="${k}" style="${done?`background:${day.color};border-color:${day.color}`:""}">${done?"✓":""}</button>${i<day.blocks.length-1?'<div class="tl-line"></div>':""}</div>`;
+        cards+=`<div><div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap"><span class="tl-time" style="color:${day.color}">${b.t}</span><span class="tl-title" style="${done?"text-decoration:line-through":""}">${b.h}</span></div><div class="tl-desc">${b.d}</div></div>`;
+        cards+=`</div>`;
+      });
+
+      if(day.hotel.name){
+        cards+=`<div class="info-card hotel"><div class="info-tag">🏨 Where to Stay</div><div style="font-weight:600;font-size:.86rem">${day.hotel.name}</div><div style="font-size:.76rem;color:#555;margin-top:1px">${day.hotel.detail}</div>`;
+        if(day.hotel.alt) cards+=`<div style="font-size:.7rem;color:#888;margin-top:3px;font-style:italic">Alt: ${day.hotel.alt}</div>`;
+        cards+=`</div>`;
+      }
+
+      cards+=`<div class="info-card dining"><div class="info-tag">🍽️ Dining Picks</div>`;
+      day.dining.forEach(d=>{cards+=`<div style="font-size:.78rem;margin-bottom:2px"><strong>${d.n}</strong> <span style="color:#888">— ${d.d}</span></div>`;});
+      cards+=`</div>`;
+
+      if(day.tip) cards+=`<div class="tip-box"><strong style="color:var(--coral)">Tip: </strong>${day.tip}</div>`;
+      cards+=`</div>`;
+    }
+    cards+=`</div>`;
+  });
+
+  el.innerHTML=nav+cards;
+
+  el.querySelectorAll(".day-chip").forEach(c=>c.addEventListener("click",()=>{
+    openDay=openDay===+c.dataset.day?null:+c.dataset.day;
+    renderItinerary();
+    if(openDay) setTimeout(()=>{document.getElementById("daycard-"+openDay)?.scrollIntoView({behavior:"smooth",block:"start"})},80);
+  }));
+  el.querySelectorAll("[data-toggle]").forEach(b=>b.addEventListener("click",()=>{
+    openDay=openDay===+b.dataset.toggle?null:+b.dataset.toggle;
+    renderItinerary();
+    if(openDay) setTimeout(()=>{document.getElementById("daycard-"+openDay)?.scrollIntoView({behavior:"smooth",block:"start"})},80);
+  }));
+  el.querySelectorAll("[data-check]").forEach(b=>b.addEventListener("click",e=>{
+    e.stopPropagation();
+    const k=b.dataset.check;
+    checked[k]=!checked[k];
+    updateProgress();
+    renderItinerary();
+  }));
+}
+
+// ===== RENDER MAP =====
+function renderMap(){
+  const svg=document.getElementById("routeMap");
+  const pt=id=>MAP_POINTS.find(p=>p.id===id);
+  const filt=mapFilter==="all"?null:+mapFilter;
+  const routes=filt?MAP_ROUTES.filter(r=>r.day===filt):MAP_ROUTES;
+  const activeIds=new Set();
+  if(filt) routes.forEach(r=>{activeIds.add(r.from);activeIds.add(r.to);});
+
+  let s=`<rect x="0" y="0" width="520" height="400" fill="#d6e6f0" rx="8"/>`;
+
+  // NB landmass
+  s+=`<path d="M180,90 Q200,80 230,88 Q255,98 272,112 Q282,122 275,132 Q265,145 252,155 Q242,168 235,185 Q228,205 225,230 Q222,260 226,285 Q228,305 230,325 Q228,340 225,345 L195,335 Q190,300 193,260 Q198,220 198,180 Q198,140 190,110Z" fill="#ddd5c8" stroke="#c4b89e" stroke-width="1"/>`;
+  s+=`<text x="210" y="210" text-anchor="middle" font-size="8" fill="#b0a590" font-weight="500" font-family="Outfit,sans-serif" transform="rotate(-75,210,210)">New Brunswick</text>`;
+
+  // NS mainland
+  s+=`<path d="M225,345 Q240,365 270,358 Q300,350 328,335 Q352,322 368,310 Q388,298 408,288 Q430,270 445,248 Q452,232 445,218 Q435,208 420,202 Q405,198 392,192 Q380,200 370,210 Q358,222 348,232 Q335,243 320,252 Q300,262 280,272 Q260,282 248,294 Q238,310 232,325 Q227,338 225,345Z" fill="#e4d9cc" stroke="#c4b89e" stroke-width="1.5"/>`;
+  s+=`<text x="355" y="278" text-anchor="middle" font-size="9" fill="#a89880" font-weight="500" font-family="Outfit,sans-serif">Nova Scotia</text>`;
+
+  // Cape Breton
+  s+=`<path d="M438,195 Q448,175 456,162 Q465,152 470,142 Q476,155 472,172 Q467,184 458,193 Q448,198 438,195Z" fill="#e4d9cc" stroke="#c4b89e" stroke-width="1"/>`;
+
+  // PEI
+  s+=`<path d="M270,125 Q292,112 315,102 Q338,92 358,85 Q378,80 398,78 Q418,80 435,88 Q445,98 442,112 Q438,122 428,132 Q418,138 408,142 Q395,146 382,145 Q368,142 354,138 Q338,134 322,130 Q308,127 293,128 Q278,130 270,125Z" fill="rgba(192,57,43,0.12)" stroke="#c0392b" stroke-width="1.5"/>`;
+  s+=`<text x="365" y="105" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="700" font-family="Outfit,sans-serif" opacity=".45">P.E.I.</text>`;
+
+  // Water labels
+  s+=`<text x="330" y="168" text-anchor="middle" font-size="7.5" fill="#8bafc4" font-style="italic" font-family="Outfit,sans-serif">Northumberland Strait</text>`;
+  s+=`<text x="455" y="345" text-anchor="middle" font-size="8" fill="#8bafc4" font-style="italic" font-family="Outfit,sans-serif">Atlantic Ocean</text>`;
+
+  // Routes
+  routes.forEach(r=>{
+    const f=pt(r.from),t=pt(r.to);
+    if(!f||!t)return;
+    s+=`<line x1="${f.x}" y1="${f.y}" x2="${t.x}" y2="${t.y}" stroke="${r.color}" stroke-width="2.5" ${r.dashed?'stroke-dasharray="6,4"':""} opacity=".65" stroke-linecap="round"/>`;
+  });
+
+  // Labels for ferry/bridge
+  if(!filt||filt===5){
+    const wi=pt("woodislands"),cb=pt("caribou");
+    s+=`<text x="${(wi.x+cb.x)/2+18}" y="${(wi.y+cb.y)/2-2}" font-size="8" fill="#6b4c9a" font-family="Outfit,sans-serif" font-weight="600">⛴ Ferry</text>`;
+  }
+  if(!filt||filt===4){
+    const br=pt("confederation");
+    s+=`<text x="${br.x+2}" y="${br.y+15}" font-size="7.5" fill="#c0392b" font-family="Outfit,sans-serif" font-weight="600">🌉 Bridge</text>`;
+  }
+
+  // Points
+  MAP_POINTS.forEach(p=>{
+    const active=!filt||activeIds.has(p.id);
+    const op=active?1:0.2;
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="5" fill="${p.color}" stroke="#fff" stroke-width="2" opacity="${op}"/>`;
+    s+=`<text x="${p.x}" y="${p.y-9}" text-anchor="middle" font-size="7.5" fill="${p.color}" font-weight="600" font-family="Outfit,sans-serif" opacity="${op}">${p.label}</text>`;
+  });
+
+  svg.innerHTML=s;
+
+  // Route cards
+  const rc=document.getElementById("routeCards");
+  rc.innerHTML=ROUTE_SUMMARY.map(r=>`
+    <button class="route-card" data-rday="${r.day}" style="border-left:4px solid ${r.color};${mapFilter==r.day?`box-shadow:0 0 0 2px ${r.color}`:""}" onclick="setMapFilter(${r.day})">
+      <div style="font-weight:600;font-size:.85rem;color:${r.color}">${r.label}</div>
+      <div style="font-size:.76rem;color:#666;margin-top:2px">${r.desc}</div>
+      <div style="font-size:.68rem;color:#aaa;margin-top:3px">📏 ${r.dist}</div>
+    </button>
+  `).join("");
+
+  // Filter buttons
+  document.querySelectorAll(".map-filter").forEach(b=>{
+    const v=b.dataset.mapday;
+    const isAct=mapFilter==="all"?v==="all":v===mapFilter;
+    b.classList.toggle("active",isAct);
+    if(isAct){
+      const c=v==="all"?"#1a4b6e":ROUTE_SUMMARY.find(r=>r.day==v)?.color||"#1a4b6e";
+      b.style.background=c;b.style.color="#fff";b.style.borderColor=c;
+    }else{b.style.background="#fff";b.style.color="#888";b.style.borderColor="#ddd";}
+  });
+}
+window.setMapFilter=function(d){mapFilter=mapFilter==d?"all":""+d;renderMap();};
+document.querySelectorAll(".map-filter").forEach(b=>b.addEventListener("click",()=>{
+  mapFilter=b.dataset.mapday;renderMap();
+}));
+
+// ===== RENDER WEATHER =====
+function renderWeather(){
+  const el=document.getElementById("tab-weather");
+  let h=`<div class="serif" style="font-size:1.2rem;color:var(--ocean);margin-bottom:4px">Weather Forecast</div>`;
+  h+=`<div style="font-size:.78rem;color:#999;margin-bottom:14px">Late June averages for Halifax & PEI region</div>`;
+
+  WEATHER.forEach(w=>{
+    h+=`<div class="wx-day">
+      <div class="wx-row">
+        <div class="wx-icon">${w.icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:.9rem">${w.day}</div>
+          <div style="font-size:.78rem;color:#888">${w.cond}</div>
+          <div class="wx-temps">
+            <span class="wx-hi">↑ ${w.hi}°C / ${Math.round(w.hi*9/5+32)}°F</span>
+            <span class="wx-lo">↓ ${w.lo}°C / ${Math.round(w.lo*9/5+32)}°F</span>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:.7rem;color:#aaa;white-space:nowrap">
+          <div>🌧 ${w.rain}</div>
+          <div>💨 ${w.wind}</div>
+        </div>
+      </div>
+      <div class="wx-detail">${w.note}</div>
+    </div>`;
+  });
+
+  h+=`<div class="wx-pack">
+    <div style="font-weight:600;font-size:.85rem;color:var(--ocean);margin-bottom:6px">🧳 What to Pack</div>
+    <div style="font-size:.82rem;color:#555;line-height:1.5">
+      <strong>Layers are key.</strong> Late June in Nova Scotia & PEI averages 17–21°C (63–70°F) during the day, dropping to 10–13°C (50–55°F) at night. Coastal areas are cooler and foggier, especially mornings at Peggy's Cove.<br><br>
+      ☀️ <strong>Essentials:</strong> Sunscreen (SPF 30+), sunglasses, hats<br>
+      🧥 <strong>Layers:</strong> Light fleece or hoodie, wind/rain jacket<br>
+      👟 <strong>Footwear:</strong> Sturdy walking shoes (rocky coastlines), sandals for beaches<br>
+      🩱 <strong>Swim:</strong> Swimsuits — PEI red sand beaches are swimmable, hotel pools<br>
+      ☔ <strong>Rain gear:</strong> Compact rain jacket for each family member (not umbrellas — too windy on the coast)<br>
+      📱 <strong>Tech:</strong> Portable charger, car phone mount for navigation
+    </div>
+  </div>`;
+
+  h+=`<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-top:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
+    <div style="font-size:.78rem;color:#888">
+      <strong>🌅 Daylight:</strong> ~15.5 hours! Sunrise ~5:30 AM, sunset ~9:00 PM ADT. You'll have incredibly long evenings for exploring.<br><br>
+      <strong>🌊 Ocean temp:</strong> Atlantic side ~9°C (brrr!). PEI's Northumberland Strait is slightly warmer at ~14°C — swimmable for brave kids!
+    </div>
+  </div>`;
+
+  el.innerHTML=h;
+}
+
+// ===== RENDER BUDGET =====
+function renderBudget(){
+  const el=document.getElementById("tab-budget");
+  const total=BUDGET.reduce((s,b)=>s+b.amt,0);
+  const hues=["205","195","215","170","35","25","190","270","350"];
+
+  let h=`<div class="serif" style="font-size:1.2rem;color:var(--ocean);margin-bottom:2px">Estimated Budget</div>`;
+  h+=`<div style="font-size:.78rem;color:#999;margin-bottom:14px">Family of 4 · CAD · Sorted highest → lowest</div>`;
+  h+=`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.04)">`;
+
+  BUDGET.forEach((b,i)=>{
+    h+=`<div class="budget-row">
+      <div class="budget-head"><span style="font-weight:500">${b.cat}</span><span style="font-weight:600;color:var(--ocean)">$${b.amt}</span></div>
+      <div class="budget-bar-bg"><div class="budget-bar" style="width:${(b.amt/total)*100}%;background:hsl(${hues[i]},45%,48%)"></div></div>
+      <div class="budget-detail">${b.detail}</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="budget-total">
+    <div style="font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;opacity:.55">Estimated Total</div>
+    <div class="serif" style="font-size:2.1rem;margin-top:2px">~$${total.toLocaleString()}</div>
+    <div style="font-size:.73rem;opacity:.55;margin-top:2px">~$${Math.round(total/4).toLocaleString()}/person</div>
+  </div>`;
+
+  el.innerHTML=h;
+}
+
+// ===== RENDER INFO =====
+function renderInfo(){
+  const el=document.getElementById("tab-info");
+  const logs=[
+    {icon:"🚗",title:"Car Rental",text:"Enterprise or National at YHZ. Midsize SUV ~CAD $65–90/day. Pick up Thu 9:30 PM, return Tue 2:00 PM."},
+    {icon:"🏨",title:"Hotels",text:"Suite-style w/ kitchenettes & free breakfast. All 4.0+ rated. 3 nights Halifax, 1 night Charlottetown, 1 night Halifax."},
+    {icon:"🌉",title:"PEI Access",text:"Enter via Confederation Bridge (free!). Return via Wood Islands ferry (book ahead ~$80). Total PEI crossing cost: ~$130."},
+    {icon:"🧥",title:"Packing",text:"Layers! Late June = 17–21°C days, 10–13°C nights. Rain jacket, sturdy shoes, swimsuits, sunscreen."},
+    {icon:"👨‍👩‍👦‍👦",title:"Group (12 ppl)",text:"3 families × 4. Consider 2–3 rental cars for flexibility. Shared WhatsApp group. Some activities split by age."},
+    {icon:"🎪",title:"Special Event",text:"Royal NS International Tattoo: Jun 27–Jul 1 at Scotiabank Centre. Kids 18 & under FREE with adult ticket purchase!"}
+  ];
+
+  let h=`<div class="serif" style="font-size:1.2rem;color:var(--ocean);margin-bottom:10px">Trip Logistics</div>`;
+  logs.forEach(l=>{
+    h+=`<div class="log-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><span class="log-icon">${l.icon}</span><span class="log-title">${l.title}</span></div><div class="log-text">${l.text}</div></div>`;
+  });
+
+  h+=`<div class="serif" style="font-size:1.05rem;color:var(--ocean);margin:20px 0 8px">Regions</div>`;
+  [{name:"Halifax",days:"Days 1, 2, 6",desc:"Historic port — Citadel, waterfront, museums, Royal Tattoo",color:"#1a4b6e"},
+   {name:"South Shore",days:"Day 3",desc:"Peggy's Cove, Mahone Bay, Lunenburg UNESCO site, sea caves",color:"#e06d4f"},
+   {name:"Prince Edward Island",days:"Days 4–5",desc:"Confederation Bridge, Green Gables, red sand beaches, Charlottetown, lobster boat tour",color:"#c0392b"}
+  ].forEach(r=>{
+    h+=`<div class="region-card" style="border-left:4px solid ${r.color}"><div style="font-weight:600;font-size:.88rem">${r.name}</div><div style="font-size:.7rem;color:${r.color};font-weight:500">${r.days}</div><div style="font-size:.78rem;color:#666;margin-top:2px">${r.desc}</div></div>`;
+  });
+
+  el.innerHTML=h;
+}
+
+// ===== INIT =====
+renderItinerary();
+renderMap();
+renderWeather();
+renderBudget();
+renderInfo();
+</script>
+</body>
+</html>
